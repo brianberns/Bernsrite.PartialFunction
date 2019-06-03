@@ -20,11 +20,10 @@ type UnitTest() =
         let rec loop x =
             [
                 yield x
-                let x' = collatz.[x]
-                if x' = 1 then
-                    yield x'
-                else
-                    yield! loop x'
+                match collatz.[x] with
+                    | Some 1 -> yield 1
+                    | Some x' -> yield! loop x'
+                    | None -> failwith "Undefined"
             ]
 
         let expected = [12; 6; 3; 10; 5; 16; 8; 4; 2; 1]
@@ -35,5 +34,5 @@ type UnitTest() =
     member __.Collect() =
         let greaterThan20 = (fun x -> x > 20) => id
         let expected = [45; 25]
-        let actual = [1; 45; 10; 25] |> List.pchoose greaterThan20
+        let actual = [1; 45; 10; 25] |> List.choosep greaterThan20
         equalLists expected actual

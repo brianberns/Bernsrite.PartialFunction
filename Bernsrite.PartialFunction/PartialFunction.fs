@@ -14,9 +14,9 @@ type PartialFunction<'input, 'output>
     /// Safely evaluates the partial function for the given input.
     member __.Item(input) =
         if isDefinedAt input then
-            func input
+            Some (func input)
         else
-            invalidArg "input" "Invalid input"
+            None
 
     /// Unsafe access to the underlying function.
     member private __.Func =
@@ -56,36 +56,24 @@ module Seq =
     /// Applies the given partial function to each element of the given sequence,
     /// answering the sequence of results by skipping inputs for which the partial
     /// function is not defined. Like Scala's "collect" function.
-    let pchoose (pfunc : PartialFunction<_, _>) source =
+    let choosep (pfunc : PartialFunction<_, _>) source =
         source
-            |> Seq.choose (fun item ->
-                if pfunc.IsDefinedAt(item) then
-                    Some pfunc.[item]
-                else
-                    None)
+            |> Seq.choose (fun item -> pfunc.[item])
 
 module List =
 
     /// Applies the given partial function to each element of the given list,
     /// answering the list of results by skipping inputs for which the partial
     /// function is not defined. Like Scala's "collect" function.
-    let pchoose (pfunc : PartialFunction<_, _>) source =
+    let choosep (pfunc : PartialFunction<_, _>) source =
         source
-            |> List.choose (fun item ->
-                if pfunc.IsDefinedAt(item) then
-                    Some pfunc.[item]
-                else
-                    None)
+            |> List.choose (fun item -> pfunc.[item])
 
 module Array =
 
     /// Applies the given partial function to each element of the given array,
     /// answering the array of results by skipping inputs for which the partial
     /// function is not defined. Like Scala's "collect" function.
-    let pchoose (pfunc : PartialFunction<_, _>) source =
+    let choosep (pfunc : PartialFunction<_, _>) source =
         source
-            |> Array.choose (fun item ->
-                if pfunc.IsDefinedAt(item) then
-                    Some pfunc.[item]
-                else
-                    None)
+            |> Array.choose (fun item -> pfunc.[item])
