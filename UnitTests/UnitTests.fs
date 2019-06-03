@@ -36,3 +36,10 @@ type UnitTest() =
         let expected = [45; 25]
         let actual = [1; 45; 10; 25] |> List.choosep greaterThan20
         equalLists expected actual
+
+    [<TestMethod>]
+    member __.Divide() =
+        let safeDivide num =
+            (fun den -> den <> 0) => (fun den -> num / den)
+        Assert.AreEqual(Some 4, (safeDivide 24).[6])
+        Assert.AreEqual(None, (safeDivide 10).[0])
